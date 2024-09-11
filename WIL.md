@@ -34,12 +34,12 @@
 
 - 1주차 과제 : api 명세 작성하기
     - API 명세를 작성할 때는 request body, request header, response body,
-    status code 등도 함께 정의해야 한다. 이번 과제에서는 HTTP Method, URL만 정의해보자
+    status code 등도 함께 정의해야 한다.    이번 과제에서는 HTTP Method, URL만 정의해보자
 
-할 일 전체 조회 : GET /todos
-할 일 생성 : POST /todos
-할 일 수정 : PATCH /todos/{todo_id}
-할 일 삭제 : DELETE /todos/{todo_id}
-할 일 체크 : PATCH /todos/{todo_id}      
-할 일 체크해제 : PATCH /todo/{todo_id} 
-<!-- http request body에 { "checked": true } or { "checked": false } 데이터 필드 포함해서 보내기 -->
+할 일 전체 조회 : GET /todos   
+할 일 생성 : POST /todos   
+할 일 수정 : PATCH /todos/{todo_id}   
+할 일 삭제 : DELETE /todos/{todo_id}   
+할 일 체크 : PATCH /todos/{todo_id}        
+할 일 체크해제 : PATCH /todo/{todo_id}   
+* http request body에 { "checked": true } or { "checked": false } 데이터 필드 포함해서 보내기 *
