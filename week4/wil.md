@@ -23,16 +23,16 @@
             ![image.png](image.png)
             
     - <DB 설계 실습>
-    
-    ![image.png](image%201.png)
-    
+        
+        ![image.png](image%201.png)
+        
 
 ---
 
 - JPA (Java Persistence API)
     - 데이터베이스에서 읽어온 데이터를 자바 객체로 매핑하는 자바의 표준 기술 (ORM)
     - 엔티티(Entity)는 자바와 데이터베이스가 소통하는 단위
-    - 테이블의 데이터 하나(레코드)는 엔티티 객체 하나로 매핑된다
+    - 테이블은 엔티티 객체 하나로 매핑된다
     
     → 엔티티 클래스를 정의하면, **JPA**가 엔티티 클래스 정의를 보고 테이블을 생성하는 SQL(쿼리)을 알아서 작성하고 실행한다.
     
@@ -42,11 +42,14 @@
             
             ![image.png](image%202.png)
             
-        - resources – application.properties 파일에 DB 접속 정보를 작성(.yml)
+        - resources – application.properties 파일에 **DB 접속 정보**를 작성(application.yml로 바꾸기)
             
             ![image.png](image%203.png)
             
         - 후, main 에서 application 실행 후, 관리자 콘솔 접속으로 DB 연결
+            
+            ![image.png](image%204.png)
+            
 
 ---
 
@@ -63,6 +66,7 @@
 - 엔티티로 저장하면 테이블을 만들 때 외래키를 만들어주고, 연관된 데이터가 필요할 때, 자동으로 join 쿼리가 실행되면서 연관된 데이터를 얻는다.
     - @JoinColumn : 외래키(FK) 컬럼 정보를 명시하는 어노테이션 (FK 컬럼 이름 등)
     - @ManyToOne
+        - Many : Todo, One : Member 이기 때문에 Todo 에 있어야함
     - @OneToOne
     - @ManyToMany 는 N : M 관계를 나타낸다. N : M 관계는 외래키대신 **테이블**로 구현하므로 사용하지 않는다.
     - @OneToMany :  1에 해당하는 엔티티(ex. 유저)에 N(ex. 동아리)에 대한 연관관계를 명시하는
@@ -76,3 +80,33 @@
     - JPA는 엔티티 객체를 다룰 때 public 또는 protected의 인자 없는 생성자(**기본 생성자**)가 필요하다.
         - @NoArgsConstructor (이때 access 속성을 통해 접근 제한자를 protected로 설정)
         - 엔티티 객체에 @Getter를 추가해 모든 필드에 getter를 만든다.
+    - <실습> : 나는 lombok을 이용했다.. gradle에 lombok 의존성 추가하기!
+        
+        ![image.png](image%205.png)
+        
+    
+    ---
+    
+    다시 application 을 재가동해 console에서 다양한 sql 문을 적어봤다. 
+    
+    +) H2 데이터베이스를 메모리 모드(jdbc:h2:mem)로 사용했기 때문에, 데이터베이스는 실제 파일이 아닌 메모리에 존재한다. 이는 어플리케이션을 실행하는 동안에만 유지되기 때문에 테스트에 적합하다!!
+    
+    - 데이터 넣기
+        
+        ![image.png](image%206.png)
+        
+        ![image.png](image%207.png)
+        
+    - 데이터 수정 하기
+        
+        ![image.png](image%208.png)
+        
+        ![image.png](image%209.png)
+        
+    - 데이터 삭제하기
+        - Todo에서 Member 의 user_id를 참조하고 있기 때문에… Todo에서 user_id 참조하고 있는 레코드를 먼저 지우셔야 한단 얘기고..
+        
+        ![image.png](image%2010.png)
+        
+
+![image.png](image%2011.png)
