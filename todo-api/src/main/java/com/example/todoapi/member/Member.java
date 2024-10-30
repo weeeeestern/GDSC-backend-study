@@ -3,12 +3,13 @@ package com.example.todoapi.member;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 @Entity
 @Data
+@Getter
 @NoArgsConstructor
-@AllArgsConstructor
 public class Member {
 
     @Id
@@ -21,5 +22,10 @@ public class Member {
 
     @Column(columnDefinition = "varchar(20)")
     private String password;
+
+    public Member(String loginId, String password) {
+        this.loginId = loginId;
+        this.password = password;
+    }
 
 }
