@@ -1,7 +1,6 @@
 package com.example.todoapi.member;
 
 import org.assertj.core.api.Assertions;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -15,33 +14,46 @@ public class MemberRepositoryTest {
 
     @Test
     @Transactional
-    public void testRegisterMember() {
-        Member member1 = new Member("user1", "password1");
-        Member member2 = new Member("user2", "password2");
+    public void saveTest() {
+        Member member = new Member("user","password");
+        memberRepository.save(member);
 
-        boolean result1 = memberRepository.registerMember(member1);
-        boolean result2 = memberRepository.registerMember(member2);
-
-        Assertions.assertThat(result1).isEqualTo(true);
-        Assertions.assertThat(result2).isEqualTo(true);
-
-        boolean result3 = memberRepository.registerMember(member1);
-        Assertions.assertThat(result3).isEqualTo(false);
+        Assertions.assertThat(member.getLoginId()).isNotNull();
     }
 
     @Test
     @Transactional
-    public void testLogin(){
-        Member member = new Member("testUser", "Password");
-        memberRepository.registerMember(member); //회원가입
+    public void findByUserIdTest() {
+        Member member1 = new Member("user1","password1");
+        memberRepository.save(member1);
 
-        // 올바른 정보로 로그인
-        Object correctLogin = memberRepository.login("testUser", "Password");
-        Assertions.assertThat(correctLogin).isInstanceOf(Member.class);
+        Member member2 = new Member("user2","password2");
+        memberRepository.save(member2);
 
-        // 틀린 정보로 로그인
-        Object wrongLogin = memberRepository.login("testUser", "wrongPassword");
-        Assertions.assertThat(wrongLogin).isEqualTo("일치하는 사용자가 없습니다.");
+        Member found = memberRepository.findByUserId(member1.getUserId());
+        Assertions.assertThat(found.getUserId()).isEqualTo(member1.getUserId());
+    }
+
+    @Test
+    @Transactional
+    public void findByLoginIdTest() {
+        Member member1 = new Member("user1","password1");
+        memberRepository.save(member1);
+
+        Member member2 = new Member("user2","password2");
+        memberRepository.save(member2);
+
+        Assertions.assertThat(memberRepository.findByLoginId("user1")).isEqualTo(member1);
+    } // h2 콘솔로 확인 과정은 건너뛰었다. 1차 캐시 막기 과정(flush) 생략
+
+    @Test
+    @Transactional
+    public void deleteTest() {
+        Member April = new Member("April","AprilPassword");
+        memberRepository.save(April);
+        memberRepository.delete(April);
+        Assertions.assertThat(memberRepository.findByLoginId("April")).isNull();
+
     }
 }
 

@@ -67,8 +67,8 @@ import java.util.List;
         void todoFindAllByMemberTest(){
             Member member1 = new Member("user1","password1");
             Member member2 = new Member("user2","password2");
-            memberRepository.registerMember(member1);
-            memberRepository.registerMember(member2);
+            memberRepository.save(member1);
+            memberRepository.save(member2);
 
             Todo todo1 = new Todo("Todo Content! 1", member1);
             Todo todo2 = new Todo("Todo Content! 2", member1);
