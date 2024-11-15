@@ -33,4 +33,6 @@ public class Todo{
     public void updateContent(String newContent){
         this.content = newContent;
     }
+
+    public boolean getChecked() { return checked; }
 }

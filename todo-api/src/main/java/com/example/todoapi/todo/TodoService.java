@@ -17,21 +17,22 @@ public class TodoService {
     private final MemberRepository memberRepository;
 
     @Transactional
-    public void createTodo(String content, Long userId) throws Exception {
+    public Long createTodo(String content, Long userId) throws Exception {
         Member member = memberRepository.findByUserId(userId);
 
-        if (member == null){
+        if (member == null) {
             throw new Exception("존재하지 않는 유저 ID 입니다.");
         }
-        Todo todo = new Todo(content,member);
+        Todo todo = new Todo(content, member);
         todoRepository.save(todo);
+        return todo.getId();
     }
 
     @Transactional(readOnly = true)
-    public List<Todo> readTools(Long userId) throws Exception{
+    public List<Todo> readTools(Long userId) throws Exception {
         Member member = memberRepository.findByUserId(userId);
 
-        if (member == null){
+        if (member == null) {
             throw new Exception("존재하지 않는 유저 ID 입니다.");
         }
         return todoRepository.findAllByMember(member);
@@ -41,35 +42,48 @@ public class TodoService {
     public void updateContent(Long todoId, String loginId, String newContent) throws Exception {
 
         Todo todo = todoRepository.findById(todoId);
-        if (todo == null){
+        if (todo == null) {
             throw new Exception("존재하지 않는 Todo 입니다.");
         }
 
         Member member = memberRepository.findByLoginId(loginId); // 로그인한 사용자가 있는 지 확인
-        if (member == null || todo.getMember().getLoginId().equals(loginId)) {
-            todo.updateContent(newContent);
-        }
-        else {
+        if (member == null || !todo.getMember().getLoginId().equals(loginId)) {
             throw new Exception("접근할 수 없는 Todo 입니다.");
+        } else {
+            todo.updateContent(newContent);
+//            todoRepository.save(todo);
         }
-    } // 논리적 로직 이해 필용!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+    }
 
     @Transactional
-    public void deleteTodo(Long todoId, String loginId) throws Exception{
+    public void deleteTodo(Long todoId, String loginId) throws Exception {
         Todo todo = todoRepository.findById(todoId);
-        if (todo == null){
+        if (todo == null) {
             throw new Exception("존재하지 않는 Todo 입니다.");
         }
 
         Member member = memberRepository.findByLoginId(loginId);
         if (member == null || todo.getMember().getLoginId().equals(loginId)) {
             todoRepository.deleteById(todoId);
-        }
-        else{
+        } else {
             throw new Exception("접근할 수 없는 Todo 입니다.");
         }
     }
 
+    @Transactional
+    public void checkTodo(Long todoId, String loginId, Boolean checked) throws Exception {
+        Todo todo = todoRepository.findById(todoId);
+        if (todo == null) {
+            throw new Exception("존재하지 않는 Todo 입니다.");
+        }
 
+        Member member = memberRepository.findByLoginId(loginId);
+        if (member == null || !todo.getMember().getLoginId().equals(loginId)) {
+            throw new Exception("접근할 수 없는 Todo 입니다.");
+        }
 
+        todo.setChecked(checked);
+        todoRepository.save(todo);
+    }
 }
+

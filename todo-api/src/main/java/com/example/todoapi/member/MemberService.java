@@ -2,15 +2,16 @@ package com.example.todoapi.member;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @RequiredArgsConstructor
 public class MemberService {
 
-    private MemberRepository memberRepository;
+    private final MemberRepository memberRepository;
 
-    @Transactional
+    @Transactional(isolation = Isolation.SERIALIZABLE)
     public String registerMember(Member member) throws Exception {
         if (memberRepository.findByLoginId(member.getLoginId()) != null) {
             throw new Exception("이미 존재하는 회원입니다.");

@@ -81,7 +81,7 @@ public class TodoServiceTest {
     }
 
     @Test
-    void testUpdateTodo_WithAuthorization() throws Exception{
+    void testUpdateTodo() throws Exception{
         Member member = new Member("testUser", "password");
         member.setUserId(1L); // userId를 수동으로 설정!!
         Todo todo1 = new Todo("Gonna be updated Test Todo1",member);
@@ -100,7 +100,7 @@ public class TodoServiceTest {
     }
 
     @Test
-    void testUpdateTodo_fail_WhenTodoNotExist() throws Exception{
+    void testUpdateTodo_fail_WhenUserNotExist() throws Exception{
         Member member = new Member("testUser", "password");
         member.setUserId(1L); // userId를 수동으로 설정!!
         Todo todo1 = new Todo("Gonna be updated Test Todo1",member);
@@ -133,7 +133,7 @@ public class TodoServiceTest {
     }
 
     @Test
-    void testDeleteTodo_WithAuthorization() throws Exception{
+    void testDeleteTodo() throws Exception{
         Member member = new Member("testUser", "password");
         member.setUserId(1L); // userId를 수동으로 설정!!
         Todo todo1 = new Todo("Gonna be deleted Test Todo1",member);
@@ -154,7 +154,7 @@ public class TodoServiceTest {
     void testDeleteTodo_fail_WhenUserNotExist() throws Exception{
         Member member = new Member("testUser", "password");
         member.setUserId(1L); // userId를 수동으로 설정!!
-        Todo todo1 = new Todo("Gonna be updated Test Todo1",member);
+        Todo todo1 = new Todo("Gonna be deleted Test Todo1",member);
         todo1.setId(1L); // todoId를 수동으로 설정
 
         given(todoRepository.findById(todo1.getId())).willReturn(null);
@@ -181,5 +181,60 @@ public class TodoServiceTest {
                 todoService.deleteTodo(todo1.getId(), unauthorizedMember.getLoginId()))
                 .isInstanceOf(Exception.class)
                 .hasMessage("접근할 수 없는 Todo 입니다.");
+    }
+
+    @Test
+    void testCheckTodo_setTrue() throws Exception{
+        Member member = new Member("testUser", "password");
+        member.setUserId(1L);
+        Todo todo = new Todo("Test Todo",member);
+
+        given(todoRepository.findById(todo.getId())).willReturn(todo);
+        todoService.checkTodo(todo.getId(),member.getLoginId(),true);
+        Assertions.assertThat(todo.getChecked()).isTrue();
+    }
+    @Test
+    void testCheckTodo_setFalse() throws Exception{
+        Member member = new Member("testUser", "password");
+        member.setUserId(1L);
+        Todo todo = new Todo("Test Todo",member);
+
+        given(todoRepository.findById(todo.getId())).willReturn(todo);
+        todoService.checkTodo(todo.getId(),member.getLoginId(),false);
+        Assertions.assertThat(todo.getChecked()).isFalse();
+    }
+
+    @Test
+    void testCheckTodo_fail_WhenUserNotExist() throws Exception{
+        Member member = new Member("testUser", "password");
+        member.setUserId(1L); // userId를 수동으로 설정!!
+        Todo todo1 = new Todo("Gonna be checked Test Todo1",member);
+        todo1.setId(1L); // todoId를 수동으로 설정
+
+        given(todoRepository.findById(todo1.getId())).willReturn(null);
+
+        Assertions.assertThatThrownBy(()-> todoService.checkTodo(todo1.getId(),member.getLoginId() ,true))
+                .isInstanceOf(Exception.class)
+                .hasMessage("존재하지 않는 Todo 입니다.");
+    }
+
+    @Test
+    void testCheckTodo_fail_Unauthorized() throws Exception{
+        Member ownerMember = new Member("ownerUser", "password");
+        ownerMember.setUserId(1L);
+        Member unauthorizedMember = new Member("unauthorizedUser", "password");
+        unauthorizedMember.setUserId(2L);
+
+        Todo todo1 = new Todo("Gonna be checked Test Todo1",ownerMember);
+        todo1.setId(1L); // todoId를 수동으로 설정
+
+        given(todoRepository.findById(todo1.getId())).willReturn(todo1);
+        given(memberRepository.findByLoginId(unauthorizedMember.getLoginId())).willReturn(unauthorizedMember);
+
+        Assertions.assertThatThrownBy(()->
+                        todoService.checkTodo(todo1.getId(),unauthorizedMember.getLoginId(), true))
+                .isInstanceOf(Exception.class)
+                .hasMessage("접근할 수 없는 Todo 입니다.");
+
     }
 }
